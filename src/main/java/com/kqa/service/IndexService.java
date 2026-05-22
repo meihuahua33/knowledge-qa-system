@@ -95,7 +95,6 @@ public class IndexService {
                 .build();
 
         milvusClient.createIndex(indexParam);
-        log.info("Milvus 向量索引创建成功");
 
         // 加载到内存
         milvusClient.loadCollection(
@@ -167,7 +166,7 @@ public class IndexService {
                     )
             );
 
-            log.info("ES 索引 [{}] 创建成功", ES_INDEX);
+            log.info("ES 索引 [{}] 初始化完成", ES_INDEX);
         } catch (Exception e) {
             log.error("ES 索引初始化失败", e);
         }

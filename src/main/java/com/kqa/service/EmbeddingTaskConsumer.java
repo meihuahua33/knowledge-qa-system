@@ -48,7 +48,6 @@ public class EmbeddingTaskConsumer {
 
             // 2. 批量调用 Embedding API
             List<List<Float>> vectors = embeddingService.embedBatch(texts);
-            log.info("Embedding 完成: {} 个向量", vectors.size());
 
             // 3. 写入 Milvus (向量)
             List<Long> chunkIds = message.getChunks().stream()

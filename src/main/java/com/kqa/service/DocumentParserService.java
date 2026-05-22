@@ -29,8 +29,6 @@ public class DocumentParserService {
         String originalFilename = file.getOriginalFilename();
         String fileType = getFileType(originalFilename);
 
-        log.info("开始解析文档: {}, 类型: {}", originalFilename, fileType);
-
         return switch (fileType) {
             case "pdf"  -> parsePdf(file);
             case "docx" -> parseDocx(file);
