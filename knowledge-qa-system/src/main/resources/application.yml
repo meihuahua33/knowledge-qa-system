@@ -1,0 +1,118 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: knowledge-qa-system
+
+  # 允许循环依赖(过渡期)
+  main:
+    allow-circular-references: true
+
+  # ===== MySQL 数据源 =====
+  datasource:
+    url: jdbc:mysql://localhost:13306/knowledge_base?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai
+    username: kqa_user
+    password: kqa_pass
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update        # 开发阶段自动建表，生产应改为 validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # ===== Redis =====
+  data:
+    redis:
+      host: localhost
+      port: 16379
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # ===== RabbitMQ =====
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # ===== 文件上传 =====
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  # ===== Spring AI (DeepSeek) =====
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:your-api-key-here}
+      base-url: https://api.deepseek.com/v1
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+      embedding:
+        options:
+          model: text-embedding-3-small       # DeepSeek 不提供 Embedding，用 OpenAI 兼容模型
+        # base-url 留空或设 OpenAI 地址，如果不用 DeepSeek embedding
+      # 如果需要单独的 embedding API:
+      # embedding:
+      #   api-key: ${OPENAI_API_KEY:}
+      #   base-url: https://api.openai.com
+
+# ===== Elasticsearch =====
+elasticsearch:
+  host: localhost
+  port: 19200
+
+# ===== Milvus =====
+milvus:
+  host: localhost
+  port: 19530
+  database: default
+
+# ===== 应用配置 =====
+app:
+  # 文档切分配置
+  chunk:
+    max-size: 500          # 每个文本块最大 token 数
+    overlap: 50            # 滑动窗口重叠 token 数
+
+  # 检索配置
+  retrieval:
+    top-k: 5               # 最终返回的 Top-K 文档片段
+    vector-candidates: 20  # 向量检索候选数
+    keyword-candidates: 20 # 关键词检索候选数
+    rrf-k: 60              # RRF 融合参数 k
+
+  # 对话配置
+  conversation:
+    max-history: 10        # 保留最近 N 轮对话
+    session-ttl: 3600      # 会话过期时间(秒)
+
+  # Embedding 模型配置
+  embedding:
+    api-key: ${EMBEDDING_API_KEY:your-api-key-here}   # OpenAI API Key
+    base-url: https://api.openai.com                   # OpenAI 地址(也可用兼容服务)
+    model: text-embedding-3-small                       # Embedding 模型名
+
+  # LLM 配置 (DeepSeek)
+  llm:
+    api-key: ${DEEPSEEK_API_KEY:your-api-key-here}     # DeepSeek API Key
+    base-url: https://api.deepseek.com                  # DeepSeek 地址
+    model: deepseek-chat                                # 对话模型
+
+# ===== 日志 =====
+logging:
+  level:
+    com.kqa: DEBUG
+    org.springframework.ai: DEBUG
